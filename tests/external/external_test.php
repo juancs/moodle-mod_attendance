@@ -40,7 +40,6 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/mod/attendance/classes/attendance_webservices_handler.php');
 require_once($CFG->dirroot . '/mod/attendance/classes/structure.php');
-require_once($CFG->dirroot . '/mod/attendance/externallib.php');
 
 /**
  * This class contains the test cases for webservices.
@@ -109,8 +108,14 @@ class external_test extends externallib_advanced_testcase {
         $this->teacher = $this->getDataGenerator()->create_and_enrol($this->course, 'editingteacher');
     }
 
-    /** test attendance_handler::get_courses_with_today_sessions */
+    /**
+     * test attendance_handler::get_courses_with_today_sessions
+     * @runInSeparateProcess
+     */
     public function test_get_courses_with_today_sessions() {
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/attendance/externallib.php');
+
         $this->resetAfterTest(true);
 
         // Just adding the same session again to check if the method returns the right amount of instances.
@@ -128,8 +133,14 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals(count($attendanceinstance['today_sessions']), 2);
     }
 
-    /** test attendance_handler::get_courses_with_today_sessions multiple */
+    /**
+     * test attendance_handler::get_courses_with_today_sessions multiple
+     * @runInSeparateProcess
+     */
     public function test_get_courses_with_today_sessions_multiple_instances() {
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/attendance/externallib.php');
+
         global $DB;
         $this->resetAfterTest(true);
 
@@ -154,8 +165,14 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals(count($course['attendance_instances']), 2);
     }
 
-    /** test attendance_handler::get_session */
+    /**
+     * test attendance_handler::get_session
+     * @runInSeparateProcess
+     */
     public function test_get_session() {
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/attendance/externallib.php');
+
         $this->resetAfterTest(true);
 
         $courseswithsessions = attendance_handler::get_courses_with_today_sessions($this->teacher->id);
@@ -175,8 +192,14 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals(count($sessioninfo['users']), 10);
     }
 
-    /** test get session with group */
+    /**
+     * test get session with group
+     * @runInSeparateProcess
+     */
     public function test_get_session_with_group() {
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/attendance/externallib.php');
+
         $this->resetAfterTest(true);
 
         // Create a group in our course, and add some students to it.
@@ -222,8 +245,14 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals(count($sessioninfo['users']), 5);
     }
 
-    /** test update user status */
+    /**
+     * test update user status
+     * @runInSeparateProcess
+     */
     public function test_update_user_status() {
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/attendance/externallib.php');
+
         $this->resetAfterTest(true);
 
         $courseswithsessions = attendance_handler::get_courses_with_today_sessions($this->teacher->id);
@@ -255,8 +284,14 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals($status['id'], $log['statusid']);
     }
 
-    /** Test adding new attendance record via ws. */
+    /**
+     * Test adding new attendance record via ws.
+     * @runInSeparateProcess
+     */
     public function test_add_attendance() {
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/attendance/externallib.php');
+
         global $DB;
         $this->resetAfterTest(true);
 
@@ -304,8 +339,14 @@ class external_test extends externallib_advanced_testcase {
         $result = mod_attendance_external::add_attendance($course->id, 'test1', 'test1', 100);
     }
 
-    /** Test remove attendance va ws. */
+    /**
+     * Test remove attendance va ws.
+     * @runInSeparateProcess
+     */
     public function test_remove_attendance() {
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/attendance/externallib.php');
+
         global $DB;
         $this->resetAfterTest(true);
 
@@ -328,8 +369,14 @@ class external_test extends externallib_advanced_testcase {
         $this->assertCount(0, $DB->get_records('attendance_sessions', ['attendanceid' => $this->attendance->id]));
     }
 
-    /** Test add session to existing attendnace via ws. */
+    /**
+     * Test add session to existing attendnace via ws.
+     * @runInSeparateProcess
+     */
     public function test_add_session() {
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/attendance/externallib.php');
+
         global $DB;
         $this->resetAfterTest(true);
 
@@ -371,8 +418,14 @@ class external_test extends externallib_advanced_testcase {
         mod_attendance_external::add_session($attendancesepgroups['attendanceid'], 'test', time(), 3600, 0, false);
     }
 
-    /** Test add session group in no group - error. */
+    /**
+     * Test add session group in no group - error.
+     * @runInSeparateProcess
+     */
     public function test_add_session_group_in_no_group_exception() {
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/attendance/externallib.php');
+
         global $DB;
         $this->resetAfterTest(true);
 
@@ -399,8 +452,14 @@ class external_test extends externallib_advanced_testcase {
         mod_attendance_external::add_session($attendancenogroups['attendanceid'], 'test', time(), 3600, $group->id, false);
     }
 
-    /** Test add sesssion to invalid group. */
+    /**
+     * Test add sesssion to invalid group.
+     * @runInSeparateProcess
+     */
     public function test_add_session_invalid_group_exception() {
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/attendance/externallib.php');
+
         global $DB;
         $this->resetAfterTest(true);
 
@@ -426,8 +485,14 @@ class external_test extends externallib_advanced_testcase {
         mod_attendance_external::add_session($attendancevisgroups['attendanceid'], 'test', time(), 3600, $group->id + 100, false);
     }
 
-    /** Test remove session via ws. */
+    /**
+     * Test remove session via ws.
+     * @runInSeparateProcess
+     */
     public function test_remove_session() {
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/attendance/externallib.php');
+
         global $DB;
         $this->resetAfterTest(true);
 
@@ -454,8 +519,14 @@ class external_test extends externallib_advanced_testcase {
         $this->assertCount(0, $DB->get_records('attendance_sessions', ['attendanceid' => $attendance['attendanceid']]));
     }
 
-    /** Test session creates cal event. */
+    /**
+     * Test session creates cal event.
+     * @runInSeparateProcess
+     */
     public function test_add_session_creates_calendar_event() {
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/attendance/externallib.php');
+
         global $DB;
         $this->resetAfterTest(true);
 
@@ -492,8 +563,14 @@ class external_test extends externallib_advanced_testcase {
         $this->assertInstanceOf('\mod_attendance\event\session_added', $events[1]);
     }
 
-    /** Test get sessions. */
+    /**
+     * Test get sessions.
+     * @runInSeparateProcess
+     */
     public function test_get_sessions() {
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/attendance/externallib.php');
+
         $this->resetAfterTest(true);
 
         $courseswithsessions = attendance_handler::get_courses_with_today_sessions($this->teacher->id);
